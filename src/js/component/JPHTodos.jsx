@@ -43,7 +43,7 @@ export const JPHTodos = () => {
 
     // Actualizar Todos
     const updateTodos = async (newTask) => {
-        const url = base_url + '/user/' + user;
+        const url = base_url + '/user/Daniel';
         const options = {
             method: 'PUT',
             body: JSON.stringify([...todos, newTask]),
@@ -54,11 +54,9 @@ export const JPHTodos = () => {
         const response = await fetch(url, options)
         if (response.ok) {
             const data = await response.json();
-            setTodos(data);
+            // setTodos(data);
         } else {
             console.log('Error: ', response.status, response.statusText)
-            const errorData = await response.json();
-            console.log('Detalles del error:', errorData);
         }
     };
 
@@ -72,6 +70,7 @@ export const JPHTodos = () => {
         if (response.ok) {
             const data = await response.json();
             setTodos([])
+            setUser()
         } else {
             console.log('Error: ', response.status, response.statusText)
         }
@@ -111,7 +110,7 @@ export const JPHTodos = () => {
     const handleOnSubmit = (event) => {
         event.preventDefault()
         const newTask = { label: inputValue, done: true }
-        // setTodos([...todos, newTask])
+        setTodos([...todos, newTask])
         updateTodos(newTask)
         // setTodos()
         setInputValue('');
@@ -134,7 +133,7 @@ export const JPHTodos = () => {
                     {user} Todo List
                 </h3>
                 <ul className="list-group">
-                    {todos.map((item) => {
+                    {todos ? todos.map((item) => {
                         return (
                             <li className="list-group-item d-flex justify-content-between align-items-center hidden-icon"
                                 key={item.id}>
@@ -143,8 +142,7 @@ export const JPHTodos = () => {
                                     onClick={() => { deleteTask(index) }} />
                             </li>
                         )
-                    })
-                    }
+                    }) : ''}
                 </ul>
                 <div>{todos.length === 0 ? 'No hay tareas, añadir tareas' : todos.length === 1 ? '1 Tarea por hacer' : todos.length + ' Tareas por hacer'}</div>
             </div>
