@@ -20,6 +20,7 @@ export const JPHTodos = () => {
         if (response.ok) {
             const data = await response.json();
             console.log(data);
+            setUser('Daniel')
         } else {
             console.log('Error: ', response.status, response.statusText)
         }
@@ -80,11 +81,11 @@ export const JPHTodos = () => {
         getTodos()
     }, []);
 
-    const deleteTaskApi = async (newTodos) => {
+    const deleteTaskApi = async (todos) => {
         const url = base_url + '/user/' + user;
         const options = {
             method: 'PUT',
-            body: JSON.stringify(newTodos),
+            body: JSON.stringify(todos),
             headers: {
                 "Content-Type": 'application/json',
             }
@@ -92,19 +93,20 @@ export const JPHTodos = () => {
         const response = await fetch(url, options)
         if (response.ok) {
             const data = await response.json();
-            setTodos(data);
+            console.log(data)
+            // setTodos(data);
         } else {
             console.log('Error: ', response.status, response.statusText)
-            const errorData = await response.json();
-            console.log('Detalles del error:', errorData);
         }
     };
 
-    const deleteTask = (id) => {
-        setTodos(todos.filter((item, currentIndex) => {
-            return id !== item.id;
-        }));
-        deleteTaskApi(todos);
+    const handleDeleteTask = (id) => {
+        const newTodos = todos.filter((item, currentIndex) => {
+            return id !== currentIndex;
+        });
+        setTodos(newTodos);
+        // updateTodos(taskDeleted)
+        deleteTaskApi(newTodos)
     };
 
     const handleOnSubmit = (event) => {
@@ -130,19 +132,19 @@ export const JPHTodos = () => {
                     />
                 </form>
                 <h3 className="text-primary">
-                    {user} Todo List
+                    {user ? user : ''} Todo List
                 </h3>
                 <ul className="list-group">
-                    {todos ? todos.map((item) => {
+                    {todos.map((item, id) => {
                         return (
                             <li className="list-group-item d-flex justify-content-between align-items-center hidden-icon"
-                                key={item.id}>
+                                key={id}>
                                 {item.label} - {item.done ? 'Terminado' : 'Pendiente'} <span className="fa fa-times"
                                     style={{ cursor: "pointer" }}
-                                    onClick={() => { deleteTask(index) }} />
+                                    onClick={() => { handleDeleteTask(id) }} />
                             </li>
                         )
-                    }) : ''}
+                    })}
                 </ul>
                 <div>{todos.length === 0 ? 'No hay tareas, añadir tareas' : todos.length === 1 ? '1 Tarea por hacer' : todos.length + ' Tareas por hacer'}</div>
             </div>
